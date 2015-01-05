@@ -1,7 +1,8 @@
 
 'use strict';
 function Menu() {}
-
+var gestureRecognition=new GestureRecognition();
+gestureRecognition.startTracking();
 Menu.prototype = {
   preload: function() {
 
@@ -11,7 +12,7 @@ Menu.prototype = {
     this.sprite = this.game.add.sprite(this.game.world.centerX, 138, 'yeoman');
     this.sprite.anchor.setTo(0.5, 0.5);
 
-    this.titleText = this.game.add.text(this.game.world.centerX, 300, '\'Allo, \'Allo!', style);
+    this.titleText = this.game.add.text(this.game.world.centerX, 300, '\'Use, \'Gestures!', style);
     this.titleText.anchor.setTo(0.5, 0.5);
 
     this.instructionsText = this.game.add.text(this.game.world.centerX, 400, 'Click anywhere to play "Click The Yeoman Logo"', { font: '16px Arial', fill: '#ffffff', align: 'center'});
@@ -22,7 +23,7 @@ Menu.prototype = {
   },
   update: function() {
     if(this.game.input.activePointer.justPressed()) {
-      this.game.state.start('play');
+      this.game.state.start('play',true,false,gestureRecognition);
     }
   }
 };

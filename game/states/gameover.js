@@ -1,8 +1,11 @@
 
 'use strict';
 function GameOver() {}
-
+var storage={};
 GameOver.prototype = {
+  init:function(gestureRecognition){
+    storage.gestureRecognition=gestureRecognition;
+  },
   preload: function () {
 
   },
@@ -19,7 +22,7 @@ GameOver.prototype = {
   },
   update: function () {
     if(this.game.input.activePointer.justPressed()) {
-      this.game.state.start('play');
+      this.game.state.start('play',true,false,storage.gestureRecognition);
     }
   }
 };
