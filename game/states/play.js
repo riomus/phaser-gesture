@@ -10,18 +10,18 @@ Play.prototype = {
     var style = { font: '20px Arial', fill: '#ffffff', align: 'center'};
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.physics.startSystem(Phaser.Physics.P2JS);
-    this.sprite = this.game.add.sprite(50, 50, 'yeoman');
-    this.sprite.scale.set(0.4,0.4);
+    this.sprite = this.game.add.sprite(50, 50, 'cannon');
+    this.sprite.scale.set(1,1);
     this.sprite.inputEnabled = true;
     this.score=0;
     this.scoreText = this.game.add.text(this.game.world.centerX, 15, 'SCORE: 0', style);
-
+    this.scoreText.anchor.setTo(0.5, 0.5);
     var bulletCollisionGroup = this.game.physics.p2.createCollisionGroup();
     var targetCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-    this.target = this.game.add.sprite(50, 50, 'yeoman');
+    this.target = this.game.add.sprite(50, 50, 'buka');
     this.game.physics.arcade.enable(this.target);
-    this.target.scale.set(0.4,0.4);
+    this.target.scale.set(0.6,0.6);
     this.target.anchor.setTo(0.5, 0.5);
     this.target.y=this.game.height/2;
     this.target.x=this.game.width-60;
@@ -39,20 +39,22 @@ Play.prototype = {
     this.sprite.anchor.setTo(0.5, 0.5);
     this.sprite.y=this.game.height/2;
     storage.gestureRecognition.onMove(function(data){
-     requestAnimationFrame(function(){
-      if(data.indexOf('N')>-1){
-        this.sprite.body.velocity.y-=15;
-      }
-      if(data.indexOf('S')>-1){
-        this.sprite.body.velocity.y+=15;
-      }
-    }.bind(this));
-   }.bind(this));
-    storage.gestureRecognition.onDetect(function(){
+      console.log(data);
       requestAnimationFrame(function(){
-        var bullet=this.bullets.create(this.sprite.x, this.sprite.y, 'yeoman');
+        if(data.indexOf('N')>-1){
+          this.sprite.body.velocity.y-=15;
+        }
+        if(data.indexOf('S')>-1){
+          this.sprite.body.velocity.y+=15;
+        }
+      }.bind(this));
+    }.bind(this));
+    storage.gestureRecognition.onDetect(function(data){
+      console.log(data);
+      requestAnimationFrame(function(){
+        var bullet=this.bullets.create(this.sprite.x, this.sprite.y, 'bullet');
         this.game.physics.arcade.enable(bullet);
-        bullet.scale.set(0.1,0.1);
+        bullet.scale.set(0.7,0.7);
         bullet.body.collideWorldBounds=false;
         bullet.body.y=this.sprite.y;
         bullet.x=this.sprite.x;
@@ -63,14 +65,16 @@ Play.prototype = {
     }.bind(this),'right');
   },
   gameEnd: function() {
+    this.target.alpha=0.2;
     this.score=this.score+1;
   },
   update: function() {
-     this.game.physics.arcade.overlap(this.bullets, this.target, this.gameEnd, null, this);
-      this.scoreText.setText('SCORE: '+this.score);
-      if(this.score>100){
-    this.game.state.start('gameover',true,false,storage.gestureRecognition);
-      }
+    this.target.alpha=1;
+    this.game.physics.arcade.overlap(this.bullets, this.target, this.gameEnd, null, this);
+    this.scoreText.setText('SCORE: '+this.score);
+    if(this.score>100){
+      this.game.state.start('gameover',true,false,storage.gestureRecognition);
+    }
   }
 };
 

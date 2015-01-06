@@ -70,44 +70,44 @@ module.exports = GameOver;
 'use strict';
 function Menu() {}
 var gestureRecognition=new GestureRecognition({
-   'hmm':{
-      'states':['a','b','c'],
-      'symbols':['E','NE','N','NW','W','WS','S','ES'],
-      'startProbability':{'a':0.1,'b':0.1,'c':0.1}
+  'getVideoElement':function(){
+    var element=document.createElement('video');
+    element.style.position='absolute';
+    element.style.left='10px';
+    element.style.top='10px';
+    element.style.width='200px';
+    element.style.opacity='0.2';
+    element.style.height='150px';
+    element.autoplay=true;
+    element.preload=true;
+    element.muted=true;
+    element.looped=true;
+    document.body.appendChild(element);
+    return element;
+  },
+    'opticalFlow':{
+      'width':200,
+      'height':150
     },
-    'gestures':{
-      'right':[["W","W","W","W","W","W","W"],["W","W","W","W","W","W","W"],["W","W","W","W","W","W","W"],["W","W","W","W","W","W","W"],["WS","W","W","W","W","W","W"],["WS","W","W","W","W","W","W"],["WS","W","W","W","W","W","W"]]
-    },
-    'getVideoElement':function(){
-      var element=document.createElement('video');
-      element.style.position='absolute';
-      element.style.left='10px';
-      element.style.top='10px';
-      element.style.width='200px';
-      element.style.opacity='0.2';
-      element.style.height='150px';
-      element.autoplay=true;
-      element.preload=true;
-      element.muted=true;
-      element.looped=true;
-      document.body.appendChild(element);
-      return element;
-    }
+  'gestures':{
+    'right': [["W","W"],["W","W"],["W","W"],["WS","W"],["WS","W"],["NW","W"],["NW","W"]]
+  }
 });
 gestureRecognition.startTracking();
+console.log(gestureRecognition);
 Menu.prototype = {
   preload: function() {
 
   },
   create: function() {
     var style = { font: '65px Arial', fill: '#ffffff', align: 'center'};
-    this.sprite = this.game.add.sprite(this.game.world.centerX, 138, 'yeoman');
+    this.sprite = this.game.add.sprite(this.game.world.centerX, 138, 'gesture');
     this.sprite.anchor.setTo(0.5, 0.5);
 
-    this.titleText = this.game.add.text(this.game.world.centerX, 300, '\'Use, \'Gestures!', style);
+    this.titleText = this.game.add.text(this.game.world.centerX, 300, 'Use, Gestures!', style);
     this.titleText.anchor.setTo(0.5, 0.5);
 
-    this.instructionsText = this.game.add.text(this.game.world.centerX, 400, 'Click anywhere to play "Click The Yeoman Logo"', { font: '16px Arial', fill: '#ffffff', align: 'center'});
+    this.instructionsText = this.game.add.text(this.game.world.centerX, 400, 'Click hand to play!', { font: '16px Arial', fill: '#ffffff', align: 'center'});
     this.instructionsText.anchor.setTo(0.5, 0.5);
 
     this.sprite.angle = -20;
@@ -135,18 +135,18 @@ Play.prototype = {
     var style = { font: '20px Arial', fill: '#ffffff', align: 'center'};
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.physics.startSystem(Phaser.Physics.P2JS);
-    this.sprite = this.game.add.sprite(50, 50, 'yeoman');
-    this.sprite.scale.set(0.4,0.4);
+    this.sprite = this.game.add.sprite(50, 50, 'cannon');
+    this.sprite.scale.set(1,1);
     this.sprite.inputEnabled = true;
     this.score=0;
     this.scoreText = this.game.add.text(this.game.world.centerX, 15, 'SCORE: 0', style);
-
+    this.scoreText.anchor.setTo(0.5, 0.5);
     var bulletCollisionGroup = this.game.physics.p2.createCollisionGroup();
     var targetCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-    this.target = this.game.add.sprite(50, 50, 'yeoman');
+    this.target = this.game.add.sprite(50, 50, 'buka');
     this.game.physics.arcade.enable(this.target);
-    this.target.scale.set(0.4,0.4);
+    this.target.scale.set(0.6,0.6);
     this.target.anchor.setTo(0.5, 0.5);
     this.target.y=this.game.height/2;
     this.target.x=this.game.width-60;
@@ -164,20 +164,22 @@ Play.prototype = {
     this.sprite.anchor.setTo(0.5, 0.5);
     this.sprite.y=this.game.height/2;
     storage.gestureRecognition.onMove(function(data){
-     requestAnimationFrame(function(){
-      if(data.indexOf('N')>-1){
-        this.sprite.body.velocity.y-=15;
-      }
-      if(data.indexOf('S')>-1){
-        this.sprite.body.velocity.y+=15;
-      }
-    }.bind(this));
-   }.bind(this));
-    storage.gestureRecognition.onDetect(function(){
+      console.log(data);
       requestAnimationFrame(function(){
-        var bullet=this.bullets.create(this.sprite.x, this.sprite.y, 'yeoman');
+        if(data.indexOf('N')>-1){
+          this.sprite.body.velocity.y-=15;
+        }
+        if(data.indexOf('S')>-1){
+          this.sprite.body.velocity.y+=15;
+        }
+      }.bind(this));
+    }.bind(this));
+    storage.gestureRecognition.onDetect(function(data){
+      console.log(data);
+      requestAnimationFrame(function(){
+        var bullet=this.bullets.create(this.sprite.x, this.sprite.y, 'bullet');
         this.game.physics.arcade.enable(bullet);
-        bullet.scale.set(0.1,0.1);
+        bullet.scale.set(0.7,0.7);
         bullet.body.collideWorldBounds=false;
         bullet.body.y=this.sprite.y;
         bullet.x=this.sprite.x;
@@ -188,14 +190,16 @@ Play.prototype = {
     }.bind(this),'right');
   },
   gameEnd: function() {
+    this.target.alpha=0.2;
     this.score=this.score+1;
   },
   update: function() {
-     this.game.physics.arcade.overlap(this.bullets, this.target, this.gameEnd, null, this);
-      this.scoreText.setText('SCORE: '+this.score);
-      if(this.score>100){
-    this.game.state.start('gameover',true,false,storage.gestureRecognition);
-      }
+    this.target.alpha=1;
+    this.game.physics.arcade.overlap(this.bullets, this.target, this.gameEnd, null, this);
+    this.scoreText.setText('SCORE: '+this.score);
+    if(this.score>100){
+      this.game.state.start('gameover',true,false,storage.gestureRecognition);
+    }
   }
 };
 
@@ -217,6 +221,10 @@ Preload.prototype = {
     this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
     this.load.setPreloadSprite(this.asset);
     this.load.image('yeoman', 'assets/yeoman-logo.png');
+    this.load.image('bullet', 'assets/bullet.gif');
+    this.load.image('cannon', 'assets/cannon.png');
+    this.load.image('gesture', 'assets/gesture.png');
+    this.load.image('buka', 'assets/buka.png');
 
   },
   create: function() {

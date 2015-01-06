@@ -13,6 +13,10 @@ Preload.prototype = {
     this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
     this.load.setPreloadSprite(this.asset);
     this.load.image('yeoman', 'assets/yeoman-logo.png');
+    this.load.image('bullet', 'assets/bullet.gif');
+    this.load.image('cannon', 'assets/cannon.png');
+    this.load.image('gesture', 'assets/gesture.png');
+    this.load.image('buka', 'assets/buka.png');
 
   },
   create: function() {
