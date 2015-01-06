@@ -1,7 +1,31 @@
 
 'use strict';
 function Menu() {}
-var gestureRecognition=new GestureRecognition();
+var gestureRecognition=new GestureRecognition({
+   'hmm':{
+      'states':['a','b','c'],
+      'symbols':['E','NE','N','NW','W','WS','S','ES'],
+      'startProbability':{'a':0.1,'b':0.1,'c':0.1}
+    },
+    'gestures':{
+      'right':[["W","W","W","W","W","W","W"],["W","W","W","W","W","W","W"],["W","W","W","W","W","W","W"],["W","W","W","W","W","W","W"],["WS","W","W","W","W","W","W"],["WS","W","W","W","W","W","W"],["WS","W","W","W","W","W","W"]]
+    },
+    'getVideoElement':function(){
+      var element=document.createElement('video');
+      element.style.position='absolute';
+      element.style.left='10px';
+      element.style.top='10px';
+      element.style.width='200px';
+      element.style.opacity='0.2';
+      element.style.height='150px';
+      element.autoplay=true;
+      element.preload=true;
+      element.muted=true;
+      element.looped=true;
+      document.body.appendChild(element);
+      return element;
+    }
+});
 gestureRecognition.startTracking();
 Menu.prototype = {
   preload: function() {
