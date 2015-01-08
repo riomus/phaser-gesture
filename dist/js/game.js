@@ -90,7 +90,7 @@ var gestureRecognition=new GestureRecognition({
       'height':150
     },
   'gestures':{
-    'right': [["W","W"],["W","W"],["W","W"],["WS","W"],["WS","W"],["NW","W"],["NW","W"]]
+    'right': [["W","W","W","W"],["W","W","W","W"],["W","W","W","W"],["WS","WS","W","W"],["WS","WS","W","W"],["NW","NW","W","W"],["NW","NW","W","W"]]
   }
 });
 gestureRecognition.startTracking();
